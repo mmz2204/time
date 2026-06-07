@@ -382,4 +382,199 @@
                 </div>
                 <div class="form-group">
                     <label>Output Local Date Time</label>
-                    <div class="result-box" id="date
+                    <div class="result-box" id="dateResult" title="Click to copy"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="ad-placeholder">
+            Looking for integration? Unix time (also known as Epoch time) is the number of seconds that have elapsed since January 1, 1970 (UTC).
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        let timeUnit = 'seconds'; 
+
+        // DOM Elements
+        const realTimeEl = document.getElementById('realTime');
+        const realTimestampEl = document.getElementById('realTimestamp');
+        const btnSeconds = document.getElementById('btnSeconds');
+        const btnMilliseconds = document.getElementById('btnMilliseconds');
+        
+        const datetimeInput = document.getElementById('datetimeInput');
+        const timestampResult = document.getElementById('timestampResult');
+        const btnDateNow = document.getElementById('btnDateNow');
+        const btnToTimestamp = document.getElementById('btnToTimestamp');
+
+        const timestampInput = document.getElementById('timestampInput');
+        const dateResult = document.getElementById('dateResult');
+        const btnTsNow = document.getElementById('btnTsNow');
+        const btnToDate = document.getElementById('btnToDate');
+        const toast = document.getElementById('toast');
+
+        // Helpers
+        const getNowTimestamp = () => {
+            return timeUnit === 'seconds' ? Math.floor(Date.now() / 1000) : Date.now();
+        };
+
+        // 高兼容性本地 ISO 时间获取，规避时区计算崩溃缺陷
+        const getLocalISOString = (date = new Date()) => {
+            try {
+                const pad = (num) => String(num).padStart(2, '0');
+                return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+            } catch (e) {
+                return "";
+            }
+        };
+
+        const showToast = (msg) => {
+            if(!toast) return;
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        };
+
+        // 带有安全兜底的跨浏览器复制函数
+        const setupClipboard = (el) => {
+            if(!el) return;
+            el.addEventListener('click', () => {
+                if (!el.textContent || el.textContent.includes('Please') || el.textContent.includes('Invalid')) return;
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(el.textContent)
+                        .then(() => showToast('Copied to clipboard!'))
+                        .catch(() => showToast('Failed to copy'));
+                } else {
+                    // 兼容无 clipboard 权限的旧版浏览器/特定内嵌环境
+                    const textarea = document.createElement('textarea');
+                    textarea.value = el.textContent;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast('Copied to clipboard!');
+                    } catch (err) {
+                        showToast('Copy not supported');
+                    }
+                    document.body.removeChild(textarea);
+                }
+            });
+        };
+
+        // 实时时钟核心逻辑
+        const updateClock = () => {
+            try {
+                const now = new Date();
+                if(realTimeEl) realTimeEl.textContent = now.toString().split(' GMT')[0]; 
+                if(realTimestampEl) realTimestampEl.textContent = `${getNowTimestamp()} ${timeUnit === 'seconds' ? 's' : 'ms'}`;
+            } catch(e) {
+                console.error(e);
+            }
+        };
+
+        // 日期转时间戳
+        const doConvertDateToTs = () => {
+            if(!datetimeInput || !timestampResult) return;
+            const val = datetimeInput.value;
+            if (!val) {
+                timestampResult.textContent = 'Please select a valid date';
+                return;
+            }
+            const ms = new Date(val).getTime();
+            timestampResult.textContent = timeUnit === 'seconds' ? Math.floor(ms / 1000) : ms;
+        };
+
+        // 时间戳转日期
+        const doConvertTsToDate = () => {
+            if(!timestampInput || !dateResult) return;
+            const val = timestampInput.value.trim();
+            if (!val) {
+                dateResult.textContent = 'Please enter a timestamp';
+                return;
+            }
+            
+            let ts = parseInt(val, 10);
+            if (isNaN(ts)) {
+                dateResult.textContent = 'Invalid format';
+                return;
+            }
+
+            // 智能纠错防御：在“秒”单位下输入了“毫秒”戳，或者反过来
+            if (timeUnit === 'seconds' && ts > 50000000000) {
+                ts = Math.floor(ts / 1000);
+            } else if (timeUnit === 'milliseconds' && ts < 50000000000) {
+                ts = ts * 1000;
+            }
+
+            const date = new Date(timeUnit === 'seconds' ? ts * 1000 : ts);
+            if (date.toString() === 'Invalid Date') {
+                dateResult.textContent = 'Invalid Timestamp';
+            } else {
+                dateResult.textContent = date.toString().split(' GMT')[0];
+            }
+        };
+
+        // 统一绑定事件并增加空指针检测
+        if(btnSeconds) {
+            btnSeconds.onclick = () => {
+                if (timeUnit === 'seconds') return;
+                timeUnit = 'seconds';
+                btnSeconds.classList.add('active');
+                if(btnMilliseconds) btnMilliseconds.classList.remove('active');
+                if(timestampInput) timestampInput.placeholder = 'e.g. 1717752000';
+                updateClock();
+                doConvertDateToTs();
+                doConvertTsToDate();
+            };
+        }
+
+        if(btnMilliseconds) {
+            btnMilliseconds.onclick = () => {
+                if (timeUnit === 'milliseconds') return;
+                timeUnit = 'milliseconds';
+                btnMilliseconds.classList.add('active');
+                if(btnSeconds) btnSeconds.classList.remove('active');
+                if(timestampInput) timestampInput.placeholder = 'e.g. 1717752000000';
+                updateClock();
+                doConvertDateToTs();
+                doConvertTsToDate();
+            };
+        }
+
+        if(btnDateNow) {
+            btnDateNow.onclick = () => {
+                if(datetimeInput) datetimeInput.value = getLocalISOString();
+                doConvertDateToTs();
+            };
+        }
+
+        if(btnTsNow) {
+            btnTsNow.onclick = () => {
+                if(timestampInput) timestampInput.value = getNowTimestamp();
+                doConvertTsToDate();
+            };
+        }
+
+        if(btnToTimestamp) btnToTimestamp.onclick = doConvertDateToTs;
+        if(btnToDate) btnToDate.onclick = doConvertTsToDate;
+
+        // 全局初始化
+        window.onload = () => {
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            if(datetimeInput) datetimeInput.value = getLocalISOString();
+            if(timestampInput) timestampInput.value = getNowTimestamp();
+            
+            doConvertDateToTs();
+            doConvertTsToDate();
+
+            setupClipboard(timestampResult);
+            setupClipboard(dateResult);
+        };
+    </script>
+</body>
+</html>
