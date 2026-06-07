@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>时间戳转换工具 - 在线时间戳转日期|日期转时间戳|实时时间转换</title>
+    <meta name="keywords" content="时间戳转换,时间戳转日期,日期转时间戳,在线时间转换,unix时间戳,实时时间,多语言时间工具">
+    <meta name="description" content="免费在线多语言时间戳转换工具，支持自动识别浏览器语言，实时显示本地时间，一键完成时间戳与标准时间互转，适用于全球用户使用。">
+    <meta name="author" content="时间转换工具">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="时间戳转换工具 - 在线实时时间转换">
+    <meta property="og:description" content="免费多语言时间戳转换工具，实时显示本地时间，一键转换时间戳与日期时间。">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* 实时时间 */
+        .time-display {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .local-time {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .timestamp-badge {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: normal;
+        }
+
+        .unit-switch {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .unit-switch button {
+            padding: 10px 20px;
+            font-size: 14px;
+            flex: none;
+        }
+
+        /* 转换区域 */
+        .convert-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .convert-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .local-time {
+                font-size: 32px;
+            }
+        }
+
+        .convert-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .convert-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-current {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-current:hover {
+            background: #218838;
+        }
+
+        .result {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            min-height: 50px;
+            border: 1px solid #ced4da;
+            word-break: break-all;
+        }
+
+        /* 底部广告位 */
+        .ad-bottom {
+            width: 100%;
+            height: 90px;
+            background: #f1f1f1;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .ad-bottom {
+                height: 60px;
+                font-size: 14px;
+            }
+        }
+
+        /* 语言隐藏 */
+        [data-lang] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 实时时间 -->
+        <div class="time-display">
+            <div class="local-time">
+                <span id="realTime"></span>
+                <span class="timestamp-badge" id="realTimestamp"></span>
+                <div class="unit-switch">
+                    <button class="btn-primary" id="secondsBtn">秒</button>
+                    <button class="btn-primary" id="millisecondsBtn">毫秒</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 转换功能 -->
+        <div class="convert-wrapper">
+            <!-- 时间转时间戳 -->
+            <div class="convert-box">
+                <h2 class="convert-title">
+                    <span data-lang="zh">日期时间 转 时间戳</span>
+                    <span data-lang="en">Date Time to Timestamp</span>
+                    <span data-lang="ja">日時 → タイムスタンプ</span>
+                    <span data-lang="ko">날짜 시간 → 타임스탬프</span>
+                    <span data-lang="hi">दिनांक समय से टाइमस्टैम्प</span>
+                </h2>
+                <div class="form-group">
+                    <label>
+                        <span data-lang="zh">日期时间</span>
+                        <span data-lang="en">Date Time</span>
+                        <span data-lang="ja">日時</span>
+                        <span data-lang="ko">날짜 시간</span>
+                        <span data-lang="hi">दिनांक समय</span>
+                    </label>
+                    <input type="datetime-local" id="datetimeInput">
+                </div>
+                <div class="btn-group">
+                    <button class="btn-primary" id="toTimestampBtn">
+                        <span data-lang="zh">转换</span>
+                        <span data-lang="en">Convert</span>
+                        <span data-lang="ja">変換</span>
+                        <span data-lang="ko">변환</span>
+                        <span data-lang="hi">रूपांतरित करें</span>
+                    </button>
+                    <button class="btn-current" id="nowToTimestampBtn">
+                        <span data-lang="zh">现在时间</span>
+                        <span data-lang="en">Now</span>
+                        <span data-lang="ja">現在</span>
+                        <span data-lang="ko">현재</span>
+                        <span data-lang="hi">अब</span>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <span data-lang="zh">转换结果</span>
+                        <span data-lang="en">Result</span>
+                        <span data-lang="ja">結果</span>
+                        <span data-lang="ko">결과</span>
+                        <span data-lang="hi">परिणाम</span>
+                    </label>
+                    <div class="result" id="timestampResult"></div>
+                </div>
+            </div>
+
+            <!-- 时间戳转时间 -->
+            <div class="convert-box">
+                <h2 class="convert-title">
+                    <span data-lang="zh">时间戳 转 日期时间</span>
+                    <span data-lang="en">Timestamp to Date Time</span>
+                    <span data-lang="ja">タイムスタンプ → 日時</span>
+                    <span data-lang="ko">タイムスタンプ → 날짜 시간</span>
+                    <span data-lang="hi">टाइमस्टैम्प से दिनांक समय</span>
+                </h2>
+                <div class="form-group">
+                    <label>
+                        <span data-lang="zh">Unix 时间戳</span>
+                        <span data-lang="en">Unix Timestamp</span>
+                        <span data-lang="ja">Unixタイムスタンプ</span>
+                        <span data-lang="ko">Unix 타임스탬프</span>
+                        <span data-lang="hi">यूनिक्स टाइमस्टैम्प</span>
+                    </label>
+                    <input type="number" id="timestampInput" placeholder="请输入时间戳">
+                </div>
+                <div class="btn-group">
+                    <button class="btn-primary" id="toTimeBtn">
+                        <span data-lang="zh">转换</span>
+                        <span data-lang="en">Convert</span>
+                        <span data-lang="ja">変換</span>
+                        <span data-lang="ko">변환</span>
+                        <span data-lang="hi">रूपांतरित करें</span>
+                    </button>
+                    <button class="btn-current" id="nowToTimeBtn">
+                        <span data-lang="zh">现在时间</span>
+                        <span data-lang="en">Now</span>
+                        <span data-lang="ja">現在</span>
+                        <span data-lang="ko">현재</span>
+                        <span data-lang="hi">अब</span>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <span data-lang="zh">转换结果</span>
+                        <span data-lang="en">Result</span>
+                        <span data-lang="ja">結果</span>
+                        <span data-lang="ko">결과</span>
+                        <span data-lang="hi">परिणाम</span>
+                    </label>
+                    <div class="result" id="timeResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部广告位 -->
+        <div class="ad-bottom">
+            广告位
+        </div>
+    </div>
+
+    <script>
+        let currentUnit = 'seconds';
+
+        // 自动语言
+        const setLanguage = () => {
+            const browserLang = navigator.language || navigator.userLanguage;
+            let lang = 'zh';
+            if(browserLang.startsWith('en')) lang = 'en';
+            else if(browserLang.startsWith('ja')) lang = 'ja';
+            else if(browserLang.startsWith('ko')) lang = 'ko';
+            else if(browserLang.startsWith('hi')) lang = 'hi';
+
+            document.querySelectorAll('[data-lang]').forEach(el => el.style.display = 'none');
+            document.querySelectorAll(`[data-lang="${lang}"]`).forEach(el => el.style.display = 'inline');
+            document.documentElement.lang = lang;
+        };
+
+        // 实时时间
+        const updateRealTime = () => {
+            const now = new Date();
+            document.getElementById('realTime').textContent = now.toLocaleString();
+            const timestamp = currentUnit === 'seconds' 
+                ? Math.floor(now.getTime() / 1000) 
+                : now.getTime();
+            document.getElementById('realTimestamp').textContent = timestamp + ' (' + (currentUnit === 'seconds' ? '秒' : '毫秒') + ')';
+        };
+
+        // 转换逻辑
+        const timestampToTime = (timestamp) => {
+            if(!timestamp) return '请输入有效时间戳';
+            const ts = parseInt(timestamp);
+            if(currentUnit === 'seconds' || ts <= 1e12) {
+                return new Date(ts * 1000).toLocaleString();
+            }
+            return new Date(ts).toLocaleString();
+        };
+
+        const timeToTimestamp = (datetime) => {
+            if(!datetime) return '请选择有效时间';
+            const ms = new Date(datetime).getTime();
+            return currentUnit === 'seconds' ? Math.floor(ms / 1000) : ms;
+        };
+
+        // 当前时间戳
+        const getCurrentTimestamp = () => {
+            return currentUnit === 'seconds' 
+                ? Math.floor(Date.now() / 1000) 
+                : Date.now();
+        };
+        
+        const getCurrentDatetime = () => new Date().toISOString().slice(0, 16);
+
+        // 更新所有时间戳显示
+        const updateAllTimestamps = () => {
+            updateRealTime();
+            
+            const dtInput = document.getElementById('datetimeInput');
+            const tsRes = document.getElementById('timestampResult');
+            if(dtInput.value) {
+                tsRes.textContent = timeToTimestamp(dtInput.value);
+            }
+
+            const tsInput = document.getElementById('timestampInput');
+            const timeRes = document.getElementById('timeResult');
+            if(tsInput.value) {
+                timeRes.textContent = timestampToTime(tsInput.value);
+            }
+        };
+
+        // 按钮事件
+        const bindEvents = () => {
+            const tsInput = document.getElementById('timestampInput');
+            const timeRes = document.getElementById('timeResult');
+            
+            document.getElementById('toTimeBtn').onclick = () => timeRes.textContent = timestampToTime(tsInput.value);
+            document.getElementById('nowToTimeBtn').onclick = () => {
+                const now = getCurrentTimestamp();
+                tsInput.value = now;
+                timeRes.textContent = timestampToTime(now);
+            };
+
+            const dtInput = document.getElementById('datetimeInput');
+            const tsRes = document.getElementById('timestampResult');
+            document.getElementById('toTimestampBtn').onclick = () => tsRes.textContent = timeToTimestamp(dtInput.value);
+            document.getElementById('nowToTimestampBtn').onclick = () => {
+                const now = getCurrentDatetime();
+                dtInput.value = now;
+                tsRes.textContent = timeToTimestamp(now);
+            };
+
+            document.getElementById('secondsBtn').onclick = () => {
+                currentUnit = 'seconds';
+                updateAllTimestamps();
+            };
+
+            document.getElementById('millisecondsBtn').onclick = () => {
+                currentUnit = 'milliseconds';
+                updateAllTimestamps();
+            };
+        };
+
+        // 初始化
+        window.onload = () => {
+            setLanguage();
+            updateRealTime();
+            setInterval(updateRealTime, 1000);
+            bindEvents();
+            document.getElementById('datetimeInput').value = getCurrentDatetime();
+        };
+    </script>
+</body>
+</html>
