@@ -34,6 +34,8 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --body-bg: #f8fafc;
+            --cyan-accent: #06b6d4;
+            --cyan-hover: #0891b2;
         }
 
         * {
@@ -43,79 +45,102 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
+        /* 强制一屏显示，隐藏主滚动条 */
         body {
             background: var(--body-bg);
             color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            height: 100vh;
+            width: 100vw;
+            display: table;
+            padding: 2vh 2vw;
+            overflow: hidden;
+        }
+
+        .wrapper-cell {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
+            margin: 0 auto;
             background: var(--card-bg);
             border-radius: 24px;
-            padding: 40px;
+            padding: 30px 40px 24px 40px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: left;
+            display: inline-block;
         }
 
         /* Header / Real-time Display */
         .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 40px;
-            padding-bottom: 30px;
+            display: block;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
         }
 
+        .header-table {
+            display: table;
+            width: 100%;
+        }
+
+        .title-area, .live-clock-wrapper {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .live-clock-wrapper {
+            text-align: right;
+            width: 300px;
+        }
+
         .title-area h1 {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: -0.5px;
             background: linear-gradient(to right, #4f46e5, #9333ea);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .title-area p {
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .live-clock-card {
             background: #f1f5f9;
-            padding: 16px 24px;
+            padding: 12px 20px;
             border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            display: inline-block;
+            text-align: left;
             min-width: 280px;
         }
 
         .live-label {
-            font-size: 11px;
+            display: block;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
             font-weight: 700;
+            margin-bottom: 2px;
         }
 
         .live-time {
-            font-size: 20px;
+            display: block;
+            font-size: 18px;
             font-weight: 700;
             color: var(--text-main);
         }
 
         .live-ts {
-            font-size: 14px;
+            display: block;
+            font-size: 13px;
             font-family: monospace;
             color: var(--primary);
             font-weight: 600;
@@ -123,22 +148,21 @@
 
         /* Unit Switcher */
         .unit-toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 30px;
+            display: block;
+            margin-bottom: 24px;
             background: #f1f5f9;
-            padding: 6px;
-            border-radius: 12px;
+            padding: 4px;
+            border-radius: 10px;
             width: fit-content;
         }
 
         .toggle-btn {
-            padding: 8px 16px;
-            font-size: 14px;
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 13px;
             font-weight: 600;
             border: none;
-            border-radius: 8px;
+            border-radius: 7px;
             cursor: pointer;
             transition: all 0.2s ease;
             background: transparent;
@@ -151,19 +175,29 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        /* Converter Grid */
+        /* Converter Grid Layout using Table for WeasyPrint/Legacy Support */
         .convert-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            margin-bottom: 40px;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 24px 0;
+            margin-left: -24px;
+            width: calc(100% + 48px);
+            margin-bottom: 24px;
+        }
+
+        .convert-col {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
         }
 
         .convert-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 30px;
+            padding: 24px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -173,30 +207,30 @@
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--text-muted);
         }
 
         .input-control {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
             color: var(--text-main);
             background: #f8fafc;
             transition: all 0.2s ease;
@@ -209,24 +243,31 @@
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
 
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
+        .btn-table {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 8px 0;
+            margin-left: -8px;
+            width: calc(100% + 16px);
+            margin-bottom: 18px;
+        }
+
+        .btn-cell {
+            display: table-cell;
         }
 
         .btn {
-            flex: 1;
-            padding: 14px;
-            font-size: 15px;
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
             font-weight: 600;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
         }
 
         .btn-primary {
@@ -249,15 +290,15 @@
 
         /* Result Area */
         .result-box {
-            padding: 16px;
+            padding: 14px;
             background: #f8fafc;
             border: 1px dashed var(--border-color);
-            border-radius: 12px;
-            min-height: 56px;
-            display: flex;
-            align-items: center;
+            border-radius: 10px;
+            min-height: 48px;
+            display: block;
+            line-height: 20px;
             font-family: monospace;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-main);
             word-break: break-all;
@@ -269,12 +310,42 @@
             content: 'Click to copy';
             position: absolute;
             right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
             font-family: system-ui;
             font-size: 11px;
             color: var(--primary);
             background: rgba(79, 70, 229, 0.08);
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Support / Footer Area */
+        .footer-section {
+            width: 100%;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Requested Custom Support Classes */
+        .text-cyan-400 {
+            color: var(--cyan-accent);
+        }
+        .font-mono {
+            font-family: monospace;
+        }
+        .select-all {
+            user-select: all;
+            -webkit-user-select: all;
+        }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        .hover\:text-cyan-300:hover {
+            color: var(--cyan-hover);
         }
 
         /* Toast Notification */
@@ -300,97 +371,101 @@
             opacity: 1;
         }
 
-        /* Responsive Design */
+        /* Mobile Adjustments (only triggers if screen height or width is small) */
         @media (max-width: 768px) {
-            .convert-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
+            body {
+                overflow: auto;
+                height: auto;
             }
-            .header-section {
-                flex-direction: column;
-                align-items: flex-start;
+            .header-table, .convert-grid, .btn-table {
+                display: block;
+                width: 100%;
+                margin-left: 0;
             }
-            .live-clock-card {
+            .title-area, .live-clock-wrapper, .convert-col, .btn-cell {
+                display: block;
                 width: 100%;
             }
-            .container {
-                padding: 24px;
+            .live-clock-wrapper {
+                text-align: left;
+                margin-top: 12px;
             }
-        }
-
-        /* Sponsor/Ad Section */
-        .ad-placeholder {
-            width: 100%;
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8fafc;
-            border: 1px dashed var(--border-color);
-            border-radius: 16px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 13px;
+            .convert-col {
+                margin-bottom: 16px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header class="header-section">
-            <div class="title-area">
-                <h1>Epoch Converter</h1>
-                <p>Universal Unix timestamp conversion tool</p>
-            </div>
-            <div class="live-clock-card">
-                <span class="live-label">● Live Local Time</span>
-                <span class="live-time" id="realTime">Loading...</span>
-                <span class="live-ts" id="realTimestamp">-</span>
-            </div>
-        </header>
+    <div class="wrapper-cell">
+        <div class="container">
+            <header class="header-section">
+                <div class="header-table">
+                    <div class="title-area">
+                        <h1>Epoch Converter</h1>
+                        <p>Universal Unix timestamp conversion tool</p>
+                    </div>
+                    <div class="live-clock-wrapper">
+                        <div class="live-clock-card">
+                            <span class="live-label">● Live Local Time</span>
+                            <span class="live-time" id="realTime">Loading...</span>
+                            <span class="live-ts" id="realTimestamp">-</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-        <div class="unit-toggle-container">
-            <button class="toggle-btn active" id="btnSeconds">Seconds (s)</button>
-            <button class="toggle-btn" id="btnMilliseconds">Milliseconds (ms)</button>
+            <div class="unit-toggle-container">
+                <button class="toggle-btn active" id="btnSeconds">Seconds (s)</button>
+                <button class="toggle-btn" id="btnMilliseconds">Milliseconds (ms)</button>
+            </div>
+
+            <main class="convert-grid">
+                
+                <div class="convert-col">
+                    <section class="convert-card">
+                        <h2 class="card-title">Date to Timestamp</h2>
+                        <div class="form-group">
+                            <label for="datetimeInput">Local Date & Time</label>
+                            <input type="datetime-local" id="datetimeInput" class="input-control">
+                        </div>
+                        <div class="btn-table">
+                            <div class="btn-cell"><button class="btn btn-secondary" id="btnDateNow">Current Time</button></div>
+                            <div class="btn-cell"><button class="btn btn-primary" id="btnToTimestamp">Convert</button></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Output Timestamp</label>
+                            <div class="result-box" id="timestampResult" title="Click to copy"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="convert-col">
+                    <section class="convert-card">
+                        <h2 class="card-title">Timestamp to Date</h2>
+                        <div class="form-group">
+                            <label for="timestampInput">Unix Timestamp</label>
+                            <input type="number" id="timestampInput" class="input-control" placeholder="e.g. 1717752000">
+                        </div>
+                        <div class="btn-table">
+                            <div class="btn-cell"><button class="btn btn-secondary" id="btnTsNow">Current TS</button></div>
+                            <div class="btn-cell"><button class="btn btn-primary" id="btnToDate">Convert</button></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Output Local Date Time</label>
+                            <div class="result-box" id="dateResult" title="Click to copy"></div>
+                        </div>
+                    </section>
+                </div>
+
+            </main>
+
+            <footer class="footer-section">
+                <span>☕ Support via PayPal:</span>
+                <strong class="text-cyan-400 font-mono select-all cursor-pointer hover:text-cyan-300" title="Click to select all">393497238@qq.com</strong>
+            </footer>
         </div>
-
-        <main class="convert-grid">
-            
-            <section class="convert-card">
-                <h2 class="card-title">Date to Timestamp</h2>
-                <div class="form-group">
-                    <label for="datetimeInput">Local Date & Time</label>
-                    <input type="datetime-local" id="datetimeInput" class="input-control">
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-secondary" id="btnDateNow">Current Time</button>
-                    <button class="btn btn-primary" id="btnToTimestamp">Convert</button>
-                </div>
-                <div class="form-group">
-                    <label>Output Timestamp</label>
-                    <div class="result-box" id="timestampResult" title="Click to copy"></div>
-                </div>
-            </section>
-
-            <section class="convert-card">
-                <h2 class="card-title">Timestamp to Date</h2>
-                <div class="form-group">
-                    <label for="timestampInput">Unix Timestamp</label>
-                    <input type="number" id="timestampInput" class="input-control" placeholder="e.g. 1717752000">
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-secondary" id="btnTsNow">Current TS</button>
-                    <button class="btn btn-primary" id="btnToDate">Convert</button>
-                </div>
-                <div class="form-group">
-                    <label>Output Local Date Time</label>
-                    <div class="result-box" id="dateResult" title="Click to copy"></div>
-                </div>
-            </section>
-
-        </main>
-
-        <footer class="ad-placeholder">
-            Looking for integration? Unix time (also known as Epoch time) is the number of seconds that have elapsed since January 1, 1970 (UTC).
-        </footer>
     </div>
 
     <div class="toast" id="toast">Copied to clipboard!</div>
@@ -420,7 +495,6 @@
             return timeUnit === 'seconds' ? Math.floor(Date.now() / 1000) : Date.now();
         };
 
-        // 高兼容性本地 ISO 时间获取，规避时区计算崩溃缺陷
         const getLocalISOString = (date = new Date()) => {
             try {
                 const pad = (num) => String(num).padStart(2, '0');
@@ -437,7 +511,7 @@
             setTimeout(() => toast.classList.remove('show'), 2000);
         };
 
-        // 带有安全兜底的跨浏览器复制函数
+        // Clipboard Copy with fallback
         const setupClipboard = (el) => {
             if(!el) return;
             el.addEventListener('click', () => {
@@ -448,7 +522,6 @@
                         .then(() => showToast('Copied to clipboard!'))
                         .catch(() => showToast('Failed to copy'));
                 } else {
-                    // 兼容无 clipboard 权限的旧版浏览器/特定内嵌环境
                     const textarea = document.createElement('textarea');
                     textarea.value = el.textContent;
                     document.body.appendChild(textarea);
@@ -464,7 +537,7 @@
             });
         };
 
-        // 实时时钟核心逻辑
+        // Real-time Clock
         const updateClock = () => {
             try {
                 const now = new Date();
@@ -475,7 +548,7 @@
             }
         };
 
-        // 日期转时间戳
+        // Convert Date to TS
         const doConvertDateToTs = () => {
             if(!datetimeInput || !timestampResult) return;
             const val = datetimeInput.value;
@@ -487,7 +560,7 @@
             timestampResult.textContent = timeUnit === 'seconds' ? Math.floor(ms / 1000) : ms;
         };
 
-        // 时间戳转日期
+        // Convert TS to Date
         const doConvertTsToDate = () => {
             if(!timestampInput || !dateResult) return;
             const val = timestampInput.value.trim();
@@ -502,7 +575,6 @@
                 return;
             }
 
-            // 智能纠错防御：在“秒”单位下输入了“毫秒”戳，或者反过来
             if (timeUnit === 'seconds' && ts > 50000000000) {
                 ts = Math.floor(ts / 1000);
             } else if (timeUnit === 'milliseconds' && ts < 50000000000) {
@@ -517,7 +589,7 @@
             }
         };
 
-        // 统一绑定事件并增加空指针检测
+        // Event Bindings
         if(btnSeconds) {
             btnSeconds.onclick = () => {
                 if (timeUnit === 'seconds') return;
@@ -561,7 +633,7 @@
         if(btnToTimestamp) btnToTimestamp.onclick = doConvertDateToTs;
         if(btnToDate) btnToDate.onclick = doConvertTsToDate;
 
-        // 全局初始化
+        // Initialization
         window.onload = () => {
             updateClock();
             setInterval(updateClock, 1000);
